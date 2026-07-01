@@ -325,6 +325,124 @@ code {
   font-size: 0.78rem;
 }
 
+/* ===== Tabs ===== */
+.tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+.tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 4px;
+  margin-right: 22px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+.tab-btn:hover { color: var(--ink); }
+.tab-btn.active { color: var(--ink); border-bottom-color: var(--teal); font-weight: 600; }
+.tab-panel.hidden { display: none; }
+
+/* ===== Message table (All Messages tab) ===== */
+.table-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.table-controls input[type="text"] {
+  flex: 1;
+  min-width: 220px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  background: var(--bg);
+  color: var(--ink);
+}
+.table-controls select {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+}
+.table-count { font-size: 0.8rem; color: var(--muted); white-space: nowrap; margin-left: auto; }
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.msg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+.msg-table th {
+  text-align: left;
+  background: var(--bg);
+  color: var(--ink-soft);
+  font-weight: 600;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+.msg-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.msg-table tbody tr:hover { background: var(--bg); }
+.msg-table td.msg-text {
+  max-width: 420px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: help;
+}
+.msg-table td.mono { font-family: 'Space Grotesk', monospace; font-size: 0.78rem; }
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.badge.outbound { background: var(--teal-soft); color: var(--teal); }
+.badge.inbound { background: var(--indigo-soft); color: var(--indigo); }
+.badge.status-read { background: var(--teal-soft); color: var(--teal); }
+.badge.status-delivered { background: var(--indigo-soft); color: var(--indigo); }
+.badge.status-not-delivered { background: var(--red-soft); color: var(--red); }
+.badge.status-unknown { background: var(--line); color: var(--muted); }
+
+.table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 14px;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+/* ===== Scrollable slot chart ===== */
+.chart-canvas-wrap.scrollable {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.chart-canvas-wrap.scrollable canvas { height: 340px !important; }
+
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .scorecards { grid-template-columns: 1fr; }
