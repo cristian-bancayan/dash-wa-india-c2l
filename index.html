@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsApp Delivery Monitor · engageSPARK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-dot" id="statusDot"></span>
+      <div class="brand-text">
+        <h1>WhatsApp Delivery Monitor</h1>
+        <p class="brand-sub">engageSPARK campaign report tracker</p>
+      </div>
+    </div>
+    <div class="report-meta" id="reportMeta">
+      <span class="meta-label">Report status</span>
+      <span class="meta-value" id="reportMetaValue">Loading…</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- Loading / error states -->
+  <div id="loadingState" class="state-banner">
+    <div class="spinner"></div>
+    <p>Reading <code>data/latest.xlsx</code>…</p>
+  </div>
+
+  <div id="errorState" class="state-banner error hidden">
+    <p><strong>Couldn't load <code>data/latest.xlsx</code> automatically.</strong>
+    This happens when the dashboard is opened directly as a file (no web server) or the file is missing.</p>
+    <label class="upload-btn">
+      Upload report manually
+      <input type="file" id="fileInput" accept=".xlsx" hidden>
+    </label>
+  </div>
+
+  <div id="dashboard" class="hidden">
+
+    <!-- Scorecards -->
+    <section class="scorecards">
+      <div class="card score-card">
+        <span class="score-label">Participants enrolled</span>
+        <span class="score-value" id="scoreEnrolled">–</span>
+        <span class="score-foot" id="scoreEnrolledFoot"></span>
+      </div>
+      <div class="card score-card">
+        <span class="score-label">WhatsApp messages sent to date</span>
+        <span class="score-value" id="scoreSent">–</span>
+        <span class="score-foot" id="scoreSentFoot"></span>
+      </div>
+      <div class="card score-card">
+        <span class="score-label">Participants who replied ≥1 time</span>
+        <span class="score-value" id="scoreResponded">–</span>
+        <span class="score-foot" id="scoreRespondedFoot"></span>
+      </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="card filters">
+      <div class="filters-header">
+        <h2>Filters</h2>
+        <button id="resetFilters" class="btn-ghost">Reset all</button>
+      </div>
+      <div class="filters-grid">
+
+        <div class="filter-block">
+          <label class="filter-title">Enrollment round</label>
+          <p class="filter-hint">Select "All" for the overall total, or pick one/more rounds to compare them side by side.</p>
+          <div id="roundChips" class="chip-list"></div>
+        </div>
+
+        <div class="filter-block">
+          <label class="filter-title">Specific participants</label>
+          <p class="filter-hint">Optional — narrows every chart to selected participants only.</p>
+          <div class="searchable-select" id="participantSelect">
+            <input type="text" id="participantSearch" placeholder="Search by name or contact ID…">
+            <div class="searchable-list" id="participantList"></div>
+            <div class="selected-tags" id="participantTags"></div>
+          </div>
+        </div>
+
+        <div class="filter-block">
+          <label class="filter-title">Weeks</label>
+          <p class="filter-hint">Weeks are counted from the campaign's first message. Select specific weeks or view all.</p>
+          <div id="weekChips" class="chip-list"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Delivery status chart -->
+    <section class="card chart-card">
+      <div class="chart-header">
+        <div>
+          <h2>Message delivery status</h2>
+          <p class="chart-sub">Outbound WhatsApp messages, split into Read, Delivered only, and Not Delivered.</p>
+        </div>
+        <div class="toggle-group" data-toggle="delivery">
+          <button class="toggle-btn active" data-mode="count">Count</button>
+          <button class="toggle-btn" data-mode="percent">%</button>
+        </div>
+      </div>
+      <div class="chart-canvas-wrap"><canvas id="deliveryChart"></canvas></div>
+    </section>
+
+    <div class="chart-row">
+      <!-- Blocked by Meta -->
+      <section class="card chart-card">
+        <div class="chart-header">
+          <div>
+            <h2>Blocked by Meta</h2>
+            <p class="chart-sub">Outbound messages rejected by Meta, by campaign week.</p>
+          </div>
+          <div class="toggle-group" data-toggle="blocked">
+            <button class="toggle-btn active" data-mode="count">Count</button>
+            <button class="toggle-btn" data-mode="percent">% of sent</button>
+          </div>
+        </div>
+        <div class="chart-canvas-wrap"><canvas id="blockedChart"></canvas></div>
+      </section>
+
+      <!-- Saturday button clicks -->
+      <section class="card chart-card">
+        <div class="chart-header">
+          <div>
+            <h2>Saturday prompt button clicks</h2>
+            <p class="chart-sub">Participants tapping the Saturday "send my prompt" button, by campaign week.</p>
+          </div>
+          <div class="toggle-group" data-toggle="button">
+            <button class="toggle-btn active" data-mode="count">Count</button>
+            <button class="toggle-btn" data-mode="percent">% of Sat. sent</button>
+          </div>
+        </div>
+        <div class="chart-canvas-wrap"><canvas id="buttonChart"></canvas></div>
+      </section>
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <p>Reads <code>data/latest.xlsx</code> directly in your browser — nothing is uploaded anywhere. Overwrite that file each week with the new engageSPARK export to refresh this dashboard.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
